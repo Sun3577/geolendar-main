@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 
 interface EventModalProps {
   showModal: boolean;
@@ -8,9 +8,9 @@ interface EventModalProps {
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   initialEvent?: {
     title: string;
-    start: Date | string;
+    start: Date | string | undefined;
     allDay: boolean;
-    id: number;
+    id: string;
   };
   handleCloseModal: () => void;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

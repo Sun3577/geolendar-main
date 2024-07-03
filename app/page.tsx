@@ -1,4 +1,5 @@
 "use client";
+
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, {
@@ -6,28 +7,42 @@ import interactionPlugin, {
   DropArg,
 } from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/20/solid";
+import { useEffect, useState } from "react";
+
 import { EventSourceInput } from "@fullcalendar/core/index.js";
 import { DeleteModal } from "@/components/DeleteModal";
 import { EventModal } from "@/components/EventModal";
 
+import { gapi } from "gapi-script";
+
+const DISCOVERY_DOCS = [
+  "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+];
+const SCOPES = "https://www.googleapis.com/auth/calendar";
+
 interface Event {
   title: string;
-  start: Date | string;
+  start: string | Date | undefined;
   allDay: boolean;
-  id: number;
+  id: string;
+}
+
+interface CalendarEvent {
+  summary: string;
+  id: string;
+  start: {
+    dateTime?: string;
+    date?: string;
+  };
+}
+
+interface CalendarEventsResponse {
+  result: {
+    items: CalendarEvent[];
+  };
 }
 
 export default function Home() {
-  const [events, setEvents] = useState([
-    { title: "event 1", id: "1" },
-    { title: "event 2", id: "2" },
-    { title: "event 3", id: "3" },
-    { title: "event 4", id: "4" },
-    { title: "event 5", id: "5" },
-  ]);
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -36,7 +51,7 @@ export default function Home() {
     title: "",
     start: "",
     allDay: false,
-    id: 0,
+    id: "",
   });
 
   useEffect(() => {
@@ -60,7 +75,7 @@ export default function Home() {
       start: data.date.toISOString(),
       title: data.draggedEl.innerText,
       allDay: data.allDay,
-      id: new Date().getTime(),
+      id: new Date().getTime().toString(),
     };
     setAllEvents([...allEvents, event]);
   }
@@ -77,7 +92,7 @@ export default function Home() {
       ...newEvent,
       start: arg.date,
       allDay: arg.allDay,
-      id: new Date().getTime(),
+      id: new Date().getTime().toString(),
     });
     setShowModal(true);
   }
@@ -101,7 +116,7 @@ export default function Home() {
       title: "",
       start: "",
       allDay: false,
-      id: 0,
+      id: "",
     });
     setShowDeleteModal(false);
     setIdToDelete(null);
@@ -115,14 +130,88 @@ export default function Home() {
       title: "",
       start: "",
       allDay: false,
-      id: 0,
+      id: "",
     });
+  }
+
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    function handleClientLoad() {
+      gapi.load("client:auth2", initClient);
+    }
+
+    function initClient() {
+      gapi.client
+        .init({
+          apiKey: process.env.API_KEY,
+          clientId: process.env.CLIENT_ID,
+          discoveryDocs: DISCOVERY_DOCS,
+          scope: SCOPES,
+        })
+        .then(() => {
+          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        });
+    }
+
+    function updateSigninStatus(isSignedIn: boolean) {
+      setIsSignedIn(isSignedIn);
+      if (isSignedIn) {
+        listUpcomingEvents();
+      }
+    }
+
+    function listUpcomingEvents() {
+      gapi.client.calendar.events
+        .list({
+          calendarId: "primary",
+          timeMin: new Date().toISOString(),
+          showDeleted: false,
+          singleEvents: true,
+          maxResults: 10,
+          orderBy: "startTime",
+        })
+        .then((response: CalendarEventsResponse) => {
+          const events = response.result.items.map(
+            (event): Event => ({
+              title: event.summary,
+              start: event.start.dateTime || event.start.date || "", // undefined를 빈 문자열로 처리
+              allDay: !event.start.dateTime,
+              id: event.id,
+            })
+          );
+          setEvents(events);
+        });
+    }
+
+    handleClientLoad();
+  }, []);
+
+  function handleAuthClick() {
+    // gapi.auth2 모듈이 초기화되었는지 확인
+    const authInstance = gapi.auth2.getAuthInstance();
+
+    if (!isSignedIn) {
+      authInstance.signIn();
+    } else {
+      authInstance.signOut();
+    }
   }
 
   return (
     <>
       <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
         <h1 className="font-bold text-2xl text-gray-700">Calendar</h1>
+        <button
+          onClick={handleAuthClick}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          {isSignedIn
+            ? "Disconnect Google Calendar"
+            : "Connect Google Calendar"}
+        </button>
       </nav>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="grid grid-cols-10">
