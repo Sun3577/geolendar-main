@@ -4,10 +4,11 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DropArg } from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
 import { DeleteModal } from "@/components/DeleteModal";
 import { EventModal } from "@/components/EventModal";
+import axios from "axios";
 
 interface Event {
   title: string;
@@ -16,7 +17,16 @@ interface Event {
   id: string;
 }
 
-const Calendar = () => {
+interface CalendarEvent {
+  summary: string;
+  id: string;
+  start: {
+    dateTime?: string;
+    date?: string;
+  };
+}
+
+const Calendar = ({ accessToken }: { accessToken: string | null }) => {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -27,6 +37,38 @@ const Calendar = () => {
     allDay: false,
     id: "",
   });
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchCalendarEvents(accessToken);
+    }
+  }, [accessToken]);
+
+  const fetchCalendarEvents = async (accessToken: string) => {
+    try {
+      const response = await axios.get(
+        "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const events: Event[] = response.data.items.map(
+        (event: CalendarEvent) => ({
+          title: event.summary,
+          start: event.start.dateTime || event.start.date,
+          allDay: !event.start.dateTime,
+          id: event.id,
+        })
+      );
+
+      setAllEvents(events);
+    } catch (error) {
+      console.error("Error fetching calendar events", error);
+    }
+  };
 
   const addEvent = (data: DropArg) => {
     const event = {
@@ -92,6 +134,7 @@ const Calendar = () => {
       id: "",
     });
   };
+
   return (
     <>
       <div className="grid grid-cols-10">

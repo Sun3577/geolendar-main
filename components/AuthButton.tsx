@@ -1,27 +1,40 @@
 "use client";
 
-import { signIn, signOut } from "next-auth/react";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 
-export function GoogleSigninButton() {
-  const handleClick = () => {
-    signIn("google");
-  };
-
-  return <button onClick={handleClick}>Google Login</button>;
+interface GoogleSigninButtonProps {
+  onLoginSuccess: (accessToken: string) => void;
 }
 
-export function NaverSigninButton() {
-  const handleClick = () => {
-    signIn("naver");
-  };
+export function GoogleSigninButton({
+  onLoginSuccess,
+}: GoogleSigninButtonProps) {
+  const login = useGoogleLogin({
+    onSuccess: (response) => {
+      onLoginSuccess(response.access_token);
+    },
+    onError: () => {
+      console.log("Login Failed");
+    },
+    scope: "https://www.googleapis.com/auth/calendar.readonly",
+  });
 
-  return <button onClick={handleClick}>Naver Login</button>;
+  return <button onClick={() => login()}>Google Login</button>;
 }
 
-export function Logout() {
-  const handleClick = () => {
-    signOut({ callbackUrl: "/" });
-  };
+interface LogoutProps {
+  onLogout: () => void;
+}
 
-  return <button onClick={handleClick}>Logout</button>;
+export function Logout({ onLogout }: LogoutProps) {
+  return (
+    <button
+      onClick={() => {
+        googleLogout();
+        onLogout();
+      }}
+    >
+      Logout
+    </button>
+  );
 }

@@ -1,10 +1,9 @@
-import { GoogleSigninButton, Logout } from "@/components/AuthButton";
-
-import Calendar from "@/components/Calendar";
+import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import User from "@/lib/models/user.model";
 import { connectToDB } from "@/lib/mongoose";
-import { getServerSession } from "next-auth";
+import ClientComponent from "@/components/ClientComponent"; // 클라이언트 컴포넌트를 임포트합니다.
+import { Logout } from "@/components/AuthButton";
 
 export default async function Home() {
   const session = await getServerSession(authConfig);
@@ -14,9 +13,6 @@ export default async function Home() {
 
   const currentUser = await User.findOne({ id: userId });
 
-  console.log("Session", session);
-  console.log("Current User", currentUser);
-
   return (
     <>
       <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
@@ -24,7 +20,7 @@ export default async function Home() {
         <div>{currentUser ? <Logout /> : <GoogleSigninButton />}</div>
       </nav>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <Calendar />
+        <ClientComponent currentUser={currentUser} />
       </main>
     </>
   );
