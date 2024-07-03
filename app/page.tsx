@@ -2,15 +2,13 @@
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, {
-  Draggable,
-  DropArg,
-} from "@fullcalendar/interaction";
+import interactionPlugin, { DropArg } from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
 import { DeleteModal } from "@/components/DeleteModal";
 import { EventModal } from "@/components/EventModal";
+import { GoogleSigninButton } from "@/components/AuthButton";
 
 const DISCOVERY_DOCS = [
   "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
@@ -51,37 +49,6 @@ export default function Home() {
     id: "",
   });
   const [isSignedIn, setIsSignedIn] = useState(false);
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.onload = () => {
-      google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_CLIENT_ID!,
-        callback: handleCredentialResponse,
-      });
-      google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-        theme: "outline",
-        size: "large",
-      });
-    };
-    document.body.appendChild(script);
-  }, []);
-
-  const handleCredentialResponse = async (response: any) => {
-    const client = google.accounts.oauth2.initTokenClient({
-      client_id: process.env.NEXT_PUBLIC_CLIENT_ID!,
-      scope: SCOPES,
-      callback: (tokenResponse: any) => {
-        if (tokenResponse.access_token) {
-          setIsSignedIn(true);
-          listUpcomingEvents(tokenResponse.access_token);
-        }
-      },
-    });
-
-    client.requestAccessToken();
-  };
 
   const addEvent = (data: DropArg) => {
     const event = {
@@ -148,48 +115,16 @@ export default function Home() {
     });
   };
 
-  const handleAuthClick = () => {
-    google.accounts.id.prompt(); // Shows the One Tap prompt
-  };
-
-  const listUpcomingEvents = async (accessToken: string) => {
-    try {
-      const response = (await gapi.client.calendar.events.list({
-        calendarId: "primary",
-        timeMin: new Date().toISOString(),
-        showDeleted: false,
-        singleEvents: true,
-        maxResults: 10,
-        orderBy: "startTime",
-        oauth_token: accessToken,
-      })) as CalendarEventsResponse;
-
-      const events = response.result.items.map(({ summary, id, start }) => ({
-        title: summary,
-        id,
-        start: start.dateTime || start.date,
-        allDay: !start.dateTime,
-      }));
-
-      setAllEvents(events);
-      console.log(allEvents);
-    } catch (error) {
-      console.error("Error fetching events: ", error);
-    }
-  };
-
   return (
     <>
       <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
         <h1 className="font-bold text-2xl text-gray-700">Calendar</h1>
-        <button
-          onClick={handleAuthClick}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           {isSignedIn
             ? "Disconnect Google Calendar"
             : "Connect Google Calendar"}
         </button>
+        <GoogleSigninButton />
       </nav>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div id="signInDiv"></div>
