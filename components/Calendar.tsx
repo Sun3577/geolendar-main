@@ -9,6 +9,9 @@ import { EventSourceInput } from "@fullcalendar/core/index.js";
 import { DeleteModal } from "@/components/DeleteModal";
 import { EventModal } from "@/components/EventModal";
 import axios from "axios";
+import { getSession, useSession } from "next-auth/react";
+
+import { connectToDB } from "@/lib/mongoose";
 
 interface Event {
   title: string;
@@ -26,7 +29,7 @@ interface CalendarEvent {
   };
 }
 
-const Calendar = ({ accessToken }: { accessToken: string | null }) => {
+const Calendar = ({ accessToken }: any) => {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);

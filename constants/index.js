@@ -30,3 +30,12 @@ const listUpcomingEvents = async (accessToken: string) => {
       console.error("Error fetching events: ", error);
     }
   };
+
+
+
+  로그인 버튼 -> GoogleSigninButton -> response -> token -> <Calendar accessToken={accessToken} /> -> fetchCalendarEvents -> event
+
+  onclick -> {    response에서 토큰을 받아서 session에 저장  } -> getSession으로 token을 받아서 calendar에 입력 -> 
+
+
+                      user.action.ts                                calendar.tsx

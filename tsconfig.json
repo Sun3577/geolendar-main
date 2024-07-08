@@ -21,8 +21,7 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    },
-    "types": ["gapi", "gapi.auth2", "gapi.client.calendar"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

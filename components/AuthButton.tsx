@@ -2,16 +2,15 @@
 
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 
-interface GoogleSigninButtonProps {
-  onLoginSuccess: (accessToken: string) => void;
-}
-
 export function GoogleSigninButton({
   onLoginSuccess,
-}: GoogleSigninButtonProps) {
+}: {
+  onLoginSuccess: (token: string) => void;
+}) {
   const login = useGoogleLogin({
+    flow: "auth-code", // 인증 흐름을 'auth-code'로 설정합니다.
     onSuccess: (response) => {
-      onLoginSuccess(response.access_token);
+      onLoginSuccess(response.code); // 'access_token' 대신 'code'를 반환합니다.
     },
     onError: () => {
       console.log("Login Failed");
@@ -22,11 +21,7 @@ export function GoogleSigninButton({
   return <button onClick={() => login()}>Google Login</button>;
 }
 
-interface LogoutProps {
-  onLogout: () => void;
-}
-
-export function Logout({ onLogout }: LogoutProps) {
+export function Logout({ onLogout }: { onLogout: () => void }) {
   return (
     <button
       onClick={() => {
