@@ -1,8 +1,5 @@
-import { useGoogleLogin } from "@react-oauth/google";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
-import { getServerSession } from "next-auth";
-import { authConfig } from "../auth";
 
 interface Props {
   id: string;
