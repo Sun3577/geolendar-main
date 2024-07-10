@@ -1,4 +1,5 @@
 import React from "react";
+import "./globals.css";
 import { getServerSession, Session } from "next-auth";
 import AuthComponent from "@/components/AuthComponent";
 import { authConfig } from "./api/auth/[...nextauth]/route";

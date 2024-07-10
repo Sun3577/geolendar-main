@@ -34,7 +34,6 @@ export default async function Home() {
           </div>
           <Calendar accessToken={session.accessToken} />
         </main>
-        ;
       </>
     );
   }
