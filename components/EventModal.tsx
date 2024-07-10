@@ -1,3 +1,5 @@
+"use client";
+
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
@@ -15,6 +17,8 @@ interface EventModalProps {
   handleCloseModal: () => void;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
+// client component
 
 export const EventModal: React.FC<EventModalProps> = ({
   showModal,

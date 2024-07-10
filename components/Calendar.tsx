@@ -4,11 +4,10 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DropArg } from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
 import { DeleteModal } from "@/components/DeleteModal";
 import { EventModal } from "@/components/EventModal";
-import axios from "axios";
 
 interface Event {
   title: string;
@@ -26,6 +25,8 @@ interface CalendarEvent {
   };
 }
 
+// client component
+
 const Calendar = ({ accessToken }: any) => {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -38,37 +39,37 @@ const Calendar = ({ accessToken }: any) => {
     id: "",
   });
 
-  useEffect(() => {
-    if (accessToken) {
-      fetchCalendarEvents(accessToken);
-    }
-  }, [accessToken]);
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     fetchCalendarEvents(accessToken);
+  //   }
+  // }, [accessToken]);
 
-  const fetchCalendarEvents = async (accessToken: string) => {
-    try {
-      const response = await axios.get(
-        "https://www.googleapis.com/calendar/v3/calendars/primary/events",
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+  // const fetchCalendarEvents = async (accessToken: string) => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     );
 
-      const events: Event[] = response.data.items.map(
-        (event: CalendarEvent) => ({
-          title: event.summary,
-          start: event.start.dateTime || event.start.date,
-          allDay: !event.start.dateTime,
-          id: event.id,
-        })
-      );
+  //     const events: Event[] = response.data.items.map(
+  //       (event: CalendarEvent) => ({
+  //         title: event.summary,
+  //         start: event.start.dateTime || event.start.date,
+  //         allDay: !event.start.dateTime,
+  //         id: event.id,
+  //       })
+  //     );
 
-      setAllEvents(events);
-    } catch (error) {
-      console.error("Error fetching calendar events", error);
-    }
-  };
+  //     setAllEvents(events);
+  //   } catch (error) {
+  //     console.error("Error fetching calendar events", error);
+  //   }
+  // };
 
   const addEvent = (data: DropArg) => {
     const event = {

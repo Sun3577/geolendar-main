@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export default function ClientButton() {
+export default function CalendarConnectButton() {
   const router = useRouter();
 
   const handleAuthClick = () => {

@@ -1,20 +1,20 @@
-"use client";
+import React from "react";
+import { getServerSession, Session } from "next-auth";
+import AuthComponent from "@/components/AuthComponent";
+import { authConfig } from "./api/auth/[...nextauth]/route";
 
-import { Inter } from "next/font/google";
-
-import { SessionProvider } from "next-auth/react";
-
-const inter = Inter({ subsets: ["latin"] });
-
-export default function RootLayout({
-  children,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+  session: Session | null;
+}
+
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const session = await getServerSession(authConfig);
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <SessionProvider>{children}</SessionProvider>
+      <body>
+        <AuthComponent session={session} />
+        {children}
       </body>
     </html>
   );
