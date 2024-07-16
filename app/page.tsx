@@ -7,7 +7,7 @@ import User from "@/lib/models/user.model";
 import AccountProfile from "@/components/AccountProfile";
 
 export default async function Home() {
-  connectToDB();
+  await connectToDB();
 
   const session = await getServerSession(authConfig);
 
@@ -27,10 +27,6 @@ export default async function Home() {
           <div>
             <h2>Access Token</h2>
             <p>{session.accessToken}</p>
-          </div>
-          <div>
-            <h2>Refresh Token</h2>
-            <p>{session.refreshToken}</p>
           </div>
           <Calendar accessToken={session.accessToken} />
         </main>

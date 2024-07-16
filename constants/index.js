@@ -39,3 +39,10 @@ const listUpcomingEvents = async (accessToken: string) => {
 
 
                       user.action.ts                                calendar.tsx
+
+
+Google Calendar Scope -> code -> oauth2Client에 code를 넣어서 -> Access Token & Refresh Token (Once) -> Mongodb에 저장
+
+{                    }
+
+-> oauth2Client에 setCredentials에 Refresh Token을 넣고 calendar 정보 가져오기

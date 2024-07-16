@@ -7,6 +7,7 @@ interface Props {
   email: string;
   image: string;
   provider: string;
+  calendar: any;
 }
 
 export async function createUser({
@@ -15,16 +16,18 @@ export async function createUser({
   email,
   image,
   provider,
+  calendar,
 }: Props) {
   try {
-    connectToDB();
+    await connectToDB();
 
-    await User.create({
+    const newUser = await User.create({
       id,
       username,
       email,
       image,
       provider,
+      calendar,
     });
   } catch (error) {
     console.log(error);

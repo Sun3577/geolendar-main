@@ -6,7 +6,7 @@ export default function CalendarConnectButton() {
   const router = useRouter();
 
   const handleAuthClick = () => {
-    router.push("/api/auth");
+    router.push("/api/auth/calendar");
   };
 
   return (

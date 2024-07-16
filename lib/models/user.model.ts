@@ -6,6 +6,13 @@ const userSchema = new mongoose.Schema({
   email: { type: String },
   image: { type: String },
   provider: { type: String, required: true },
+  calendar: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Calendar",
+      default: [],
+    },
+  ],
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
