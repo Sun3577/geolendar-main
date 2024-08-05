@@ -1,10 +1,10 @@
 import { google } from "googleapis";
 import { redirect } from "next/navigation";
-import { connectToDB } from "@/lib/mongoose";
+import { connectToDB } from "../../../../lib/mongoose";
 import { getServerSession } from "next-auth";
 import { authConfig } from "../[...nextauth]/route";
-import User from "@/lib/models/user.model";
-import Calendar from "@/lib/models/calendar.model";
+import User from "../../../../lib/models/user.model";
+import Calendar from "../../../../lib/models/calendar.model";
 
 export async function GET() {
   await connectToDB();
@@ -40,6 +40,4 @@ export async function GET() {
   });
 
   redirect(authorizationUrl);
-
-  // redirect 후 localhost:3000으로 redirect되면서 받은 code로 token 교환
 }
