@@ -4,16 +4,12 @@ import User from "@/lib/models/user.model";
 import { connectToDB } from "@/lib/mongoose";
 import { google } from "googleapis";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Page({ searchParams }) {
   const session = await getServerSession(authConfig);
 
   await connectToDB();
 
-  const code = searchParams.code as string;
+  const code = searchParams.code;
 
   const oauth2Client = new google.auth.OAuth2(
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,

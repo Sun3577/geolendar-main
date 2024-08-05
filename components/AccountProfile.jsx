@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function AccountProfile({ imageUrl }: any) {
+export default function AccountProfile({ imageUrl }) {
   const profileLink = "/profile";
   return (
     <Link href={profileLink} scroll={true}>

@@ -1,15 +1,10 @@
 import React from "react";
 import "./globals.css";
-import { getServerSession, Session } from "next-auth";
-import AuthComponent from "@/components/AuthComponent";
+import { getServerSession } from "next-auth";
+import AuthComponent from "../components/AuthComponent";
 import { authConfig } from "./api/auth/[...nextauth]/route";
 
-interface RootLayoutProps {
-  children: React.ReactNode;
-  session: Session | null;
-}
-
-export default async function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }) {
   const session = await getServerSession(authConfig);
   return (
     <html lang="en">

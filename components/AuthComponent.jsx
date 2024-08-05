@@ -3,7 +3,7 @@
 import SignInButton from "./SignInButton";
 import SignOutButton from "./SignOutButton";
 
-export default function AuthComponent({ session }: any) {
+export default function AuthComponent({ session }) {
   if (!session) {
     return (
       <div>

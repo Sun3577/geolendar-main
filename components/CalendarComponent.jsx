@@ -1,38 +1,20 @@
 "use client";
-
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, { DropArg } from "@fullcalendar/interaction";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useState } from "react";
-import { EventSourceInput } from "@fullcalendar/core/index.js";
-import { DeleteModal } from "@/components/DeleteModal";
-import { EventModal } from "@/components/EventModal";
-
-interface Event {
-  title: string;
-  start: string | Date | undefined;
-  allDay: boolean;
-  id: string;
-}
-
-interface CalendarEvent {
-  summary: string;
-  id: string;
-  start: {
-    dateTime?: string;
-    date?: string;
-  };
-}
+import { DeleteModal } from "/components/DeleteModal";
+import { EventModal } from "/components/EventModal";
 
 // client component
 
-const CalendarComponent = ({ accessToken }: any) => {
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
+const CalendarComponent = ({ accessToken }) => {
+  const [allEvents, setAllEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [idToDelete, setIdToDelete] = useState<number | null>(null);
-  const [newEvent, setNewEvent] = useState<Event>({
+  const [idToDelete, setIdToDelete] = useState(null);
+  const [newEvent, setNewEvent] = useState({
     title: "",
     start: "",
     allDay: false,
@@ -71,7 +53,7 @@ const CalendarComponent = ({ accessToken }: any) => {
   //   }
   // };
 
-  const addEvent = (data: DropArg) => {
+  const addEvent = (data) => {
     const event = {
       ...newEvent,
       start: data.date.toISOString(),
@@ -82,14 +64,14 @@ const CalendarComponent = ({ accessToken }: any) => {
     setAllEvents([...allEvents, event]);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e) => {
     setNewEvent({
       ...newEvent,
       title: e.target.value,
     });
   };
 
-  const handleDateClick = (arg: { date: Date; allDay: boolean }) => {
+  const handleDateClick = (arg) => {
     setNewEvent({
       ...newEvent,
       start: arg.date,
@@ -99,7 +81,7 @@ const CalendarComponent = ({ accessToken }: any) => {
     setShowModal(true);
   };
 
-  const handleDeleteModal = (data: { event: { id: string } }) => {
+  const handleDeleteModal = (data) => {
     setShowDeleteModal(true);
     setIdToDelete(Number(data.event.id));
   };
@@ -124,7 +106,7 @@ const CalendarComponent = ({ accessToken }: any) => {
     setIdToDelete(null);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setAllEvents([...allEvents, newEvent]); // 전체 이벤트에 저장
     setShowModal(false);
@@ -147,7 +129,7 @@ const CalendarComponent = ({ accessToken }: any) => {
               center: "title",
               right: "resourceTimelineWook, dayGridMonth,timeGridWeek",
             }}
-            events={allEvents as EventSourceInput}
+            events={allEvents}
             nowIndicator={true}
             editable={true}
             droppable={true}

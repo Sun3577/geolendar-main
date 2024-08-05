@@ -1,26 +1,11 @@
 "use client";
-
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 
-interface EventModalProps {
-  showModal: boolean;
-  onClose: () => void;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  initialEvent?: {
-    title: string;
-    start: Date | string | undefined;
-    allDay: boolean;
-    id: string;
-  };
-  handleCloseModal: () => void;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
 // client component
 
-export const EventModal: React.FC<EventModalProps> = ({
+export const EventModal = ({
   showModal,
   onClose,
   handleSubmit,

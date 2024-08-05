@@ -1,10 +1,10 @@
-import CalendarComponent from "@/components/CalendarComponent";
-import CalendarConnectButton from "@/components/CalendarConnectButton";
+import CalendarComponent from "../components/CalendarComponent.jsx";
+import CalendarConnectButton from "../components/CalendarConnectButton";
 import { getServerSession } from "next-auth";
 import { authConfig } from "./api/auth/[...nextauth]/route";
-import { connectToDB } from "@/lib/mongoose";
-import User from "@/lib/models/user.model";
-import AccountProfile from "@/components/AccountProfile";
+import { connectToDB } from "../lib/mongoose";
+import User from "../lib/models/user.model";
+import AccountProfile from "../components/AccountProfile";
 
 export default async function Home() {
   await connectToDB();

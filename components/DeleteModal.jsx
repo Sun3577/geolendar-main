@@ -1,21 +1,10 @@
 "use client";
-
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
-interface DeleteModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onDelete: () => void;
-}
-
 // client component
 
-export const DeleteModal: React.FC<DeleteModalProps> = ({
-  isOpen,
-  onClose,
-  onDelete,
-}) => {
+export const DeleteModal = ({ isOpen, onClose, onDelete }) => {
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
