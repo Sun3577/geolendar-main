@@ -27,7 +27,7 @@ interface CalendarEvent {
 
 // client component
 
-const Calendar = ({ accessToken }: any) => {
+const CalendarComponent = ({ accessToken }: any) => {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -194,4 +194,4 @@ const Calendar = ({ accessToken }: any) => {
   );
 };
 
-export default Calendar;
+export default CalendarComponent;

@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 
-import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { connectToDB } from "../../../../lib/mongoose";
@@ -8,52 +7,17 @@ import { connectToDB } from "../../../../lib/mongoose";
 import { createUser } from "../../../../lib/actions/user.actions";
 import User from "../../../../lib/models/user.model";
 
-// Google Login을 위한 코드
-
-declare module "next-auth" {
-  interface Session {
-    accessToken?: string;
-    user: {
-      id?: string;
-      email?: string;
-      name?: string;
-      image?: string;
-      provider?: string;
-    };
-  }
-
-  interface User {
-    id?: string;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    accessToken?: string;
-    id?: string;
-  }
-}
-
-interface Props {
-  id: string;
-  username: string;
-  email: string;
-  image: string;
-  provider: string;
-  calendar: any;
-}
-
-export const authConfig: NextAuthOptions = {
+export const authConfig = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
     }),
   ],
   callbacks: {
     async signIn({ user, account }) {
-      const userInfo: Props = {
+      const userInfo = {
         id: user?.id || "",
         username: user?.name || "",
         email: user?.email || "",

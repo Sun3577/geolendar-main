@@ -1,4 +1,4 @@
-import Calendar from "@/components/Calendar";
+import CalendarComponent from "@/components/CalendarComponent";
 import CalendarConnectButton from "@/components/CalendarConnectButton";
 import { getServerSession } from "next-auth";
 import { authConfig } from "./api/auth/[...nextauth]/route";
@@ -14,10 +14,6 @@ export default async function Home() {
   const currentUser = await User.findOne({ id: session?.user.id });
   const imageUrl = currentUser?.image;
 
-  console.log("Session", session);
-
-  console.log("User", currentUser);
-
   if (session) {
     return (
       <>
@@ -28,7 +24,7 @@ export default async function Home() {
             <h2>Access Token</h2>
             <p>{session.accessToken}</p>
           </div>
-          <Calendar accessToken={session.accessToken} />
+          <CalendarComponent accessToken={session.accessToken} />
         </main>
       </>
     );
