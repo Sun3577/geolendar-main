@@ -3,6 +3,7 @@ import { authConfig } from "../api/auth/[...nextauth]/route";
 import User from "../../lib/models/user.model";
 import { connectToDB } from "../../lib/mongoose";
 import { google } from "googleapis";
+import { redirect } from "next/navigation";
 
 export default async function Page({ searchParams }) {
   const session = await getServerSession(authConfig);
@@ -10,8 +11,6 @@ export default async function Page({ searchParams }) {
   await connectToDB();
 
   const code = searchParams.code;
-
-  console.log("Code", code);
 
   const oauth2Client = new google.auth.OAuth2(
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
@@ -22,7 +21,10 @@ export default async function Page({ searchParams }) {
   if (code) {
     let { tokens } = await oauth2Client.getToken(code);
 
-    // Save Token in DB
+    await User.findOneAndUpdate(
+      { id: session?.user.id },
+      { access_token: tokens.access_token, refresh_token: tokens.refresh_token }
+    );
 
     oauth2Client.setCredentials(tokens);
 
@@ -30,7 +32,7 @@ export default async function Page({ searchParams }) {
 
     let response;
 
-    let calendar_events;
+    let events;
 
     try {
       const request = {
@@ -39,33 +41,38 @@ export default async function Page({ searchParams }) {
         timeMax: new Date().toISOString(),
         showDeleted: false,
         singleEvents: true,
-        maxResults: 2500,
+        maxResults: 10,
         orderBy: "startTime",
       };
       response = await calendar.events.list(request);
-      calendar_events = response.data.items;
+      events = response.data.items;
     } catch (error) {
       console.log("Response Error", error);
     }
 
-    if (!calendar_events || calendar_events.length == 0) {
+    if (!events || events.length == 0) {
       console.log("No Events Found");
-      return;
+      redirect("/");
     } else {
-      const output = calendar_events.reduce(
-        (str, event) =>
-          `${str}${event.summary} (${
-            event.start.dateTime || event.start.date
-          })\n`,
-        "Events:\n"
-      );
-      console.log("Output", output);
+      const eventItems = events.map((event) => ({
+        id: event.id,
+        title: event.summary,
+        description: event.description || "",
+        location: event.location || null,
+        createdAt: event.created,
+        start: event.start,
+        end: event.end,
+        color: event.colorId || "7",
+      }));
+
+      //save formatted events in db
+      console.log(eventItems);
+
+      redirect("/");
     }
   } else {
     console.log("No code");
   }
-
-  const currentUser = await User.findOne({ id: session?.user.id });
 
   return (
     <div>

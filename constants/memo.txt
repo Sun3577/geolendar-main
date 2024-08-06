@@ -1,0 +1,43 @@
+/, Home, page.jsx
+
+|
+|
+|
+V
+
+authenticate with google (Connect Calendar), /api/auth/calendar/route.js
+
+|
+|
+|
+V
+
+/accounts.google.com/o/oauth2/v2 ... , (Choose Account)
+
+|
+|
+|
+V
+
+/accounts.google.com/signin/oauth/v2 ... , (Access Authorization)
+
+|
+|
+(redirect to locahost:3000/calendar)
+|
+V
+
+/calendar?code= ...
+
+|
+|
+|
+V
+
+get code -> get token, save token to db, request to google for calendar events, format calendar events and [save in db]
+
+|
+|
+(redirect to locahost:3000/)
+|
+V

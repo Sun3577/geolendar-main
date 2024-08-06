@@ -24,6 +24,8 @@ export const authConfig = {
         image: user?.image || "",
         provider: account?.provider || "",
         calendar: [],
+        access_token: "",
+        refresh_token: "",
       };
       try {
         await connectToDB();
